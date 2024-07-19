@@ -1,19 +1,28 @@
-const express = require('express');
-require('dotenv').config();
-const dbConnect = require("./config/db.config");
-const router = require('./routes/test');
+const express = require("express");
+var cors = require("cors");
+
+require("dotenv").config();
+
+const dbConfig = require("./config/db.config");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
+const userRoutes = require("./routes/userRoutes");
+const movieRoute = require("./routes/movieRoutes");
+const theatreRoute = require("./routes/theatreRoutes");
+const showRoute = require("./routes/showRoute");
+const bookingRoute = require("./routes/bookingRoute");
+
+app.use(cors());
 app.use(express.json());
-app.use('/api', router);
-app.get('/' , (req , res) => {
-    res.json({
-        message: 'Working good'
-    });
-});
+app.use("/api/users", userRoutes);
+app.use("/api/movies", movieRoute);
+app.use("/api/theatres", theatreRoute);
+app.use("/api/shows", showRoute);
+app.use("/api/bookings", bookingRoute);
+
+const PORT = process.env.PORT || 8081;
 
 app.listen(PORT, () => {
-    console.log('Server is running on port 3000');
+  console.log("server running");
 });
