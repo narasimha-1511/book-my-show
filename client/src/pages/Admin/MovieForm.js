@@ -29,9 +29,31 @@ const MovieForm = ({
 
   console.log("this is from Form", selectedMovie);
 
-  const onFinish = async (values) =>{
-    // create tyhe finishing logic pover here
-  }
+  const onFinish = async (values) => {
+    try {
+      dispatch(showLoading());
+      let response = null;
+      if (formType === "add") {
+        response = await addMovie(values);
+        setSelectedMovie(null);
+      } else {
+        response = await updateMovie({ ...values, movieId: selectedMovie._id });
+        setSelectedMovie(null);
+      }
+      console.log(response);
+      if (response.success) {
+        getData();
+        message.success(response.message);
+        setIsModalOpen(false);
+      } else {
+        message.error(response.message);
+      }
+      dispatch(hideLoading());
+    } catch (err) {
+      dispatch(hideLoading());
+      message.error(err.message);
+    }
+  };
 
   // const handleOk = () => {
   //   setIsModalOpen(false); onOk={handleOk}
@@ -81,6 +103,14 @@ const MovieForm = ({
               ></Input>
             </Form.Item>
           </Col>
+          <Col span={24}>
+            <Form.Item
+              label="Description"
+              htmlFor="description"
+              name="description"
+              className="d-block"
+              rules={[{ required: true, message: "Description is required!" }]}
+            >
               <TextArea
                 id="description"
                 rows="4"
@@ -97,7 +127,16 @@ const MovieForm = ({
                 lg: 16,
               }}
             >
-            
+              <Col span={8}>
+                <Form.Item
+                  label="Movie  Duration (in min)"
+                  htmlFor="duration"
+                  name="duration"
+                  className="d-block"
+                  rules={[
+                    { required: true, message: "Movie duration  is required!" },
+                  ]}
+                >
                   <Input
                     id="duration"
                     type="number"
@@ -126,8 +165,79 @@ const MovieForm = ({
                       { value: "Punjabi", label: "Punjabi" },
                       { value: "Telugu", label: "Telugu" },
                       { value: "Bengali", label: "Bengali" },
-                      { value: "German", label: "German"  },
-                    ]
+                      { value: "German", label: "German" },
+                    ]}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item
+                  label="Release Date"
+                  htmlFor="releaseDate"
+                  name="releaseDate"
+                  className="d-block"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Movie Release Date is required!",
+                    },
+                  ]}
+                >
+                  <Input
+                    id="releaseDate"
+                    type="date"
+                    placeholder="Choose the release date"
+                  ></Input>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Col>
+          <Col span={24}>
+            <Row
+              gutter={{
+                xs: 6,
+                sm: 10,
+                md: 12,
+                lg: 16,
+              }}
+            >
+              <Col span={8}>
+                <Form.Item
+                  label="Select Movie Genre"
+                  htmlFor="genre"
+                  name="genre"
+                  className="d-block"
+                  rules={[
+                    { required: true, message: "Movie genre  is required!" },
+                  ]}
+                >
+                  <Select
+                    defaultValue="Select Movie"
+                    style={{ width: "100%" }}
+                    onChange={handleChange}
+                    options={[
+                      { value: "Action", label: "Action" },
+                      { value: "Comedy", label: "Comedy" },
+                      { value: "Horror", label: "Horror" },
+                      { value: "Love", label: "Love" },
+                      { value: "Patriot", label: "Patriot" },
+                      { value: "Bhakti", label: "Bhakti" },
+                      { value: "Thriller", label: "Thriller" },
+                      { value: "Mystery", label: "Mystery" },
+                    ]}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={16}>
+                <Form.Item
+                  label="Poster  URL"
+                  htmlFor="poster"
+                  name="poster"
+                  className="d-block"
+                  rules={[
+                    { required: true, message: "Movie Poster  is required!" },
+                  ]}
+                >
                   <Input
                     id="poster"
                     type="text"
